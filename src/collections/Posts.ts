@@ -1,10 +1,24 @@
-import { CollectionConfig } from 'payload';
+import { CollectionConfig } from "payload";
+import { revalidateBlog } from "@/lib/revalidate";
 
 export const Posts: CollectionConfig = {
-    slug: 'posts',
+    slug: "posts",
+
+    hooks: {
+        afterChange: [
+            async ({ doc }) => {
+                await revalidateBlog(doc.slug);
+            },
+        ],
+        afterDelete: [
+            async ({ doc }) => {
+                await revalidateBlog(doc.slug);
+            },
+        ],
+    },
 
     admin: {
-        useAsTitle: 'title',
+        useAsTitle: "title",
     },
 
     access: {
@@ -13,34 +27,34 @@ export const Posts: CollectionConfig = {
 
     fields: [
         {
-            name: 'title',
-            type: 'text',
+            name: "title",
+            type: "text",
             required: true,
         },
         {
-            name: 'slug',
-            type: 'text',
+            name: "slug",
+            type: "text",
             required: true,
             unique: true,
         },
         {
-            name: 'publishedAt',
-            type: 'date',
+            name: "publishedAt",
+            type: "date",
             admin: {
-                position: 'sidebar',
+                position: "sidebar",
             },
         },
         {
-            name: 'heroImage',
-            type: 'relationship',
-            relationTo: 'media',
+            name: "heroImage",
+            type: "relationship",
+            relationTo: "media",
             admin: {
-                position: 'sidebar',
+                position: "sidebar",
             },
         },
         {
-            name: 'content',
-            type: 'richText',
+            name: "content",
+            type: "richText",
             required: true,
         },
     ],

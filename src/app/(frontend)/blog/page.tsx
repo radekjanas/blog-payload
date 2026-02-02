@@ -1,9 +1,18 @@
-import { payload } from '@/lib/payload';
+import { payload } from "@/lib/payload";
+import type { Metadata } from "next";
+
+export const dynamic = "force-static";
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+    title: "Blog",
+    description: "Artykuły o technologii i programowaniu",
+};
 
 export default async function BlogPage() {
     const posts = await payload.find({
-        collection: 'posts',
-        sort: '-publishedAt',
+        collection: "posts",
+        sort: "-publishedAt",
         limit: 10,
     });
 
