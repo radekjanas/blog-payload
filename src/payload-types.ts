@@ -207,6 +207,7 @@ export interface Post {
     [k: string]: unknown;
   };
   category?: (number | Category)[] | null;
+  status: 'draft' | 'published';
   updatedAt: string;
   createdAt: string;
 }
@@ -381,6 +382,7 @@ export interface PostsSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   category?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }

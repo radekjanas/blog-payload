@@ -7,6 +7,7 @@ import { getRenderableImage } from "@/lib/media";
 import { getRenderableCategories } from "@/lib/categories";
 import Link from "next/link";
 import Image from "next/image";
+import { draftMode } from "next/headers";
 
 export const dynamic = "force-static";
 export const revalidate = 60;
@@ -39,14 +40,21 @@ export async function generateMetadata({
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
+    const { isEnabled } = await draftMode();
 
     const posts = await payload.find({
         collection: "posts",
         where: {
-            slug: {
-                equals: slug,
-            },
+            slug: { equals: slug },
+            ...(isEnabled
+                ? {}
+                : {
+                      status: {
+                          equals: "published",
+                      },
+                  }),
         },
+        draft: isEnabled,
         limit: 1,
     });
 

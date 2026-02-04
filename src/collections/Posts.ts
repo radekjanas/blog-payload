@@ -31,10 +31,24 @@ export const Posts: CollectionConfig = {
 
     admin: {
         useAsTitle: "title",
+        preview: (doc) => {
+            if (!doc?.slug) return null;
+            return `/api/preview?slug=${doc.slug}`;
+        },
     },
 
     access: {
-        read: () => true,
+        read: ({ req }) => {
+            // Admin (zalogowany)
+            if (req.user) return true;
+
+            // Publiczny frontend
+            return {
+                status: {
+                    equals: "published",
+                },
+            };
+        },
     },
 
     fields: [
@@ -74,6 +88,16 @@ export const Posts: CollectionConfig = {
             type: "relationship",
             relationTo: "categories",
             hasMany: true,
+        },
+        {
+            name: "status",
+            type: "select",
+            options: [
+                { label: "Draft", value: "draft" },
+                { label: "Published", value: "published" },
+            ],
+            defaultValue: "draft",
+            required: true,
         },
     ],
 };
