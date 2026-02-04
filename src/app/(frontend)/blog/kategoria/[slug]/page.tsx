@@ -2,8 +2,8 @@ import { payload } from "@/lib/payload";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getRenderableCategories } from "@/lib/categories";
+import { Pagination } from "@/components/Pagination";
 
-export const dynamic = "force-static";
 export const revalidate = 60;
 
 export async function generateMetadata({
@@ -30,8 +30,16 @@ export async function generateMetadata({
     };
 }
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoryPage({
+    params,
+    searchParams,
+}: {
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ page?: string }>;
+}) {
     const { slug } = await params;
+    const { page } = await searchParams;
+    const currentPage = Number(page ?? "1");
 
     // 1️⃣ pobierz kategorię
     const categoriesRes = await payload.find({
@@ -40,6 +48,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             slug: { equals: slug },
         },
         limit: 1,
+        page: currentPage,
     });
 
     const category = categoriesRes.docs[0];
@@ -56,6 +65,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 contains: category.id,
             },
         },
+        limit: 5,
+        page: currentPage,
         depth: 1,
     });
 
@@ -88,6 +99,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     </article>
                 );
             })}
+
+            <Pagination
+                page={postsRes.page ?? currentPage}
+                totalPages={postsRes.totalPages}
+                basePath={`/blog/kategoria/${slug}`}
+            />
         </section>
     );
 }

@@ -2,12 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-export async function revalidateBlog(slug?: string) {
-    // lista wpisów
+export async function revalidateBlog(slug?: string, categorySlug?: string) {
     revalidatePath("/blog");
-
-    // pojedynczy wpis
-    if (slug) {
-        revalidatePath(`/blog/${slug}`);
-    }
+    if (slug) revalidatePath(`/blog/${slug}`);
+    if (categorySlug) revalidatePath(`/blog/kategoria/${categorySlug}`);
 }

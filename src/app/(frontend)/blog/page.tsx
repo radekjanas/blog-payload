@@ -2,8 +2,8 @@ import { payload } from "@/lib/payload";
 import type { Metadata } from "next";
 import { getRenderableCategories } from "@/lib/categories";
 import Link from "next/link";
+import { Pagination } from "@/components/Pagination";
 
-export const dynamic = "force-static";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
@@ -11,11 +11,19 @@ export const metadata: Metadata = {
     description: "Artykuły o technologii i programowaniu",
 };
 
-export default async function BlogPage() {
+export default async function BlogPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ page?: string }>;
+}) {
+    const { page } = await searchParams;
+    const currentPage = Number(page ?? "1");
+
     const posts = await payload.find({
         collection: "posts",
         sort: "-publishedAt",
-        limit: 10,
+        limit: 1,
+        page: currentPage,
     });
 
     return (
@@ -33,9 +41,13 @@ export default async function BlogPage() {
                             </h2>
 
                             {categories.length > 0 && (
-                                <ul>
+                                <ul className="badges">
                                     {categories.map((cat) => (
-                                        <li key={cat.slug}>{cat.title}</li>
+                                        <li key={cat.slug}>
+                                            <Link href={`/blog/kategoria/${cat.slug}`}>
+                                                {cat.title}
+                                            </Link>
+                                        </li>
                                     ))}
                                 </ul>
                             )}
@@ -43,6 +55,12 @@ export default async function BlogPage() {
                     );
                 })}
             </ul>
+
+            <Pagination
+                page={posts.page ?? currentPage}
+                totalPages={posts.totalPages}
+                basePath="/blog"
+            />
         </main>
     );
 }

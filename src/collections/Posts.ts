@@ -1,5 +1,6 @@
 import { CollectionConfig } from "payload";
 import { revalidateBlog } from "@/lib/revalidate";
+import { getRenderableCategories } from "@/lib/categories";
 
 export const Posts: CollectionConfig = {
     slug: "posts",
@@ -8,11 +9,22 @@ export const Posts: CollectionConfig = {
         afterChange: [
             async ({ doc }) => {
                 await revalidateBlog(doc.slug);
+
+                const categories = getRenderableCategories(doc.categories);
+
+                for (const category of categories) {
+                    await revalidateBlog(undefined, category.slug);
+                }
             },
         ],
         afterDelete: [
             async ({ doc }) => {
                 await revalidateBlog(doc.slug);
+
+                const categories = getRenderableCategories(doc.categories);
+                for (const category of categories) {
+                    await revalidateBlog(undefined, category.slug);
+                }
             },
         ],
     },

@@ -6,8 +6,19 @@ export const Categories: CollectionConfig = {
 
     hooks: {
         afterChange: [
-            async () => {
+            async ({ doc }) => {
+                // lista bloga (bo badge, breadcrumb itp.)
                 await revalidateBlog();
+
+                // konkretna strona kategorii
+                await revalidateBlog(undefined, doc.slug);
+            },
+        ],
+
+        afterDelete: [
+            async ({ doc }) => {
+                await revalidateBlog();
+                await revalidateBlog(undefined, doc.slug);
             },
         ],
     },

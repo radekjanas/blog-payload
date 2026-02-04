@@ -62,7 +62,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     return (
         <article>
             <h1>{post.title}</h1>
-            <Link href="/blog">Powrót</Link>
+            <nav aria-label="breadcrumb">
+                <ol>
+                    <li>
+                        <Link href="/blog">Blog</Link>
+                    </li>
+                    {categories.map((cat) => (
+                        <li key={cat.slug}>
+                            <Link href={`/blog/kategoria/${cat.slug}`}>{cat.title}</Link>
+                        </li>
+                    ))}
+                    <li aria-current="page">{post.title}</li>
+                </ol>
+            </nav>
 
             {categories.length > 0 && (
                 <ul className="categories">
