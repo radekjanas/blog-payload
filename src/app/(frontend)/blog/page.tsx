@@ -1,5 +1,7 @@
 import { payload } from "@/lib/payload";
 import type { Metadata } from "next";
+import { getRenderableCategories } from "@/lib/categories";
+import Link from "next/link";
 
 export const dynamic = "force-static";
 export const revalidate = 60;
@@ -21,11 +23,25 @@ export default async function BlogPage() {
             <h1>Blog</h1>
 
             <ul>
-                {posts.docs.map((post) => (
-                    <li key={post.id}>
-                        <a href={`/blog/${post.slug}`}>{post.title}</a>
-                    </li>
-                ))}
+                {posts.docs.map((post) => {
+                    const categories = getRenderableCategories(post.category);
+
+                    return (
+                        <article key={post.id}>
+                            <h2>
+                                <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                            </h2>
+
+                            {categories.length > 0 && (
+                                <ul>
+                                    {categories.map((cat) => (
+                                        <li key={cat.slug}>{cat.title}</li>
+                                    ))}
+                                </ul>
+                            )}
+                        </article>
+                    );
+                })}
             </ul>
         </main>
     );

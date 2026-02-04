@@ -57,5 +57,11 @@ export const Posts: CollectionConfig = {
             type: "richText",
             required: true,
         },
+        {
+            name: "category",
+            type: "relationship",
+            relationTo: "categories",
+            hasMany: true,
+        },
     ],
 };

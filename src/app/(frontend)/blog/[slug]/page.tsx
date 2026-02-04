@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { mediaToOGImages } from "@/lib/og";
 import { getRenderableImage } from "@/lib/media";
+import { getRenderableCategories } from "@/lib/categories";
+import Link from "next/link";
+import Image from "next/image";
 
 export const dynamic = "force-static";
 export const revalidate = 60;
@@ -48,17 +51,38 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     });
 
     const post = posts.docs[0];
-    const image = getRenderableImage(post.heroImage);
 
     if (!post) {
         notFound();
     }
 
+    const categories = getRenderableCategories(post.category);
+    const image = getRenderableImage(post.heroImage);
+
     return (
         <article>
             <h1>{post.title}</h1>
+            <Link href="/blog">Powrót</Link>
 
-            {image && <img src={image.src} alt={image.alt} width={800} />}
+            {categories.length > 0 && (
+                <ul className="categories">
+                    {categories.map((cat) => (
+                        <li key={cat.slug}>
+                            <Link href={`/blog/kategoria/${cat.slug}`}>{cat.title}</Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            {image && (
+                <Image
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    priority
+                />
+            )}
 
             <RichText content={post.content} />
         </article>

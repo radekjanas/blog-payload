@@ -1,22 +1,26 @@
-import { CollectionConfig } from 'payload';
+import { CollectionConfig } from "payload";
 
 export const Media: CollectionConfig = {
-    slug: 'media',
+    slug: "media",
+
+    access: {
+        read: () => true,
+    },
 
     admin: {
-        useAsTitle: 'alt',
+        useAsTitle: "alt",
     },
 
     upload: {
-        staticDir: 'uploads',
+        staticDir: "uploads",
         imageSizes: [
             {
-                name: 'thumbnail',
+                name: "thumbnail",
                 width: 400,
                 height: 300,
             },
             {
-                name: 'card',
+                name: "card",
                 width: 800,
                 height: 600,
             },
@@ -25,8 +29,8 @@ export const Media: CollectionConfig = {
 
     fields: [
         {
-            name: 'alt',
-            type: 'text',
+            name: "alt",
+            type: "text",
             required: true,
         },
     ],
